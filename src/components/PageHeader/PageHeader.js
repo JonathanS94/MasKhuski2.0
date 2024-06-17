@@ -1,10 +1,14 @@
 import React from "react";
 
 // reactstrap components
-import { Container } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
 import Logo from "commons/Logo";
-
+import Button from "commons/Button";
+import Input from "commons/Input";
+//Estilo
+import { useStyles } from "./PagerHeader.style";
 export default function PageHeader() {
+  const classes = useStyles();
   return (
     <div className="page-header header-filter">
       <div className="squares square1" />
@@ -13,15 +17,30 @@ export default function PageHeader() {
       <div className="squares square4" />
       <div className="squares square5" />
       <div className="squares square6" />
-      <div className="squares square7" />
-      <Container>
-        <div className="content-center brand">
-          <h1 className="h1-seo">MÁS KHUSKI</h1>
-          <Logo/>
-          <h2 className="d-none d-sm-block">
-            Cuenta Comingo
-          </h2>
-        </div>
+      <div className="squares square6" />
+
+      <Container className={classes.container}>
+        <Row className="w-100">
+          <Col
+            md="6"
+            className="d-flex flex-column align-items-center justify-content-center spaced-col"
+          >
+            <div className={classes.h1}>MÁS KHUSKI</div>
+            <Logo />
+            <div className={classes.h2}>Cuenta Conmigo</div>
+          </Col>
+          <Col
+            md="6"
+            className="d-flex flex-column align-items-center justify-content-center spaced-col"
+          >
+            <Input
+              className={classes.input}
+              placeholder="Ingrese su Nombre o Alias "
+            />
+            <Input className={classes.input} placeholder="Ingrese su Edad " />
+            <Button className={classes.button} color="success" value="JUGAR" />
+          </Col>
+        </Row>
       </Container>
     </div>
   );
