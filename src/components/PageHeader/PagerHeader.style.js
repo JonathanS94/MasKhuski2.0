@@ -2,7 +2,7 @@ import { createUseStyles } from "react-jss";
 
 export const useStyles = createUseStyles({
   h1: {
-    fontSize: "48px",
+    fontSize: "40px",
     fontFamily: "Poppins",
     fontWeight: "bold",
   },
@@ -26,18 +26,17 @@ export const useStyles = createUseStyles({
     color: "#000",
     borderColor: "#80bdff",
     outline: "none",
-
     marginTop: "20px",
     marginLeft: "52px",
     marginRight: "52px",
   },
   container: {
     alignItems: "center",
+    justifyContent: "center",
     display: "flex",
     marginTop: "20px",
   },
   img: {
     width: "500px",
-    
   },
 });
