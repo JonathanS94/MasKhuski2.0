@@ -2,7 +2,6 @@ import React from "react";
 
 // reactstrap components
 import { Container, Row, Col } from "reactstrap";
-import Logo from "commons/Logo";
 import Image from "commons/Image.js";
 import Button from "commons/Button";
 import Input from "commons/Input";
@@ -31,7 +30,7 @@ export default function PageHeader() {
               className={classes.img}
               src={require("assets/img/logo/logo.png")}
             />
-          
+
             <div className={classes.h2}>Cuenta Conmigo</div>
           </Col>
           <Col
