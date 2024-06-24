@@ -11,15 +11,22 @@ export const useStyles = createUseStyles({
     fontFamily: "Poppins",
   },
   button: {
-    width: "80%",
-    height: "20%",
+    width: "70%",
+    height: "100px",
     fontSize: "40px",
     marginTop: "20px",
+    marginBottom: "40px",
+    padding: "20px",
   },
   input: {
     width: "100%",
-    height: "100px",
+    height: "80px",
     fontSize: "30px",
+    backgroundColor: "#f8f9fa",
+    color: "#000",
+    borderColor: "#80bdff",
+    outline: "none",
+
     marginTop: "20px",
     marginLeft: "52px",
     marginRight: "52px",
@@ -27,5 +34,10 @@ export const useStyles = createUseStyles({
   container: {
     alignItems: "center",
     display: "flex",
+    marginTop: "20px",
+  },
+  img: {
+    width: "500px",
+    
   },
 });

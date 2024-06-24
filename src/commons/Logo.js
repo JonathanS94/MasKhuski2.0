@@ -7,8 +7,8 @@ const Logo = () => {
         alt="..."
         className="img-fluid rounded-circle shadow-lg"
         src={require("assets/img/mike.jpg")}
-        style={{ width: "800px" }}
-      /> 
+        style={{ width: "500px" }}
+      />
     </>
   );
 };

@@ -3,6 +3,7 @@ import React from "react";
 // reactstrap components
 import { Container, Row, Col } from "reactstrap";
 import Logo from "commons/Logo";
+import Image from "commons/Image.js";
 import Button from "commons/Button";
 import Input from "commons/Input";
 //Estilo
@@ -26,7 +27,11 @@ export default function PageHeader() {
             className="d-flex flex-column align-items-center justify-content-center spaced-col"
           >
             <div className={classes.h1}>MÁS KHUSKI</div>
-            <Logo />
+            <Image
+              className={classes.img}
+              src={require("assets/img/logo/logo.png")}
+            />
+          
             <div className={classes.h2}>Cuenta Conmigo</div>
           </Col>
           <Col
@@ -38,7 +43,12 @@ export default function PageHeader() {
               placeholder="Ingrese su Nombre o Alias "
             />
             <Input className={classes.input} placeholder="Ingrese su Edad " />
-            <Button className={classes.button} color="success" value="JUGAR" />
+            <Button
+              className={classes.button}
+              color="success"
+              value="JUGAR"
+              href="/niveles"
+            />
           </Col>
         </Row>
       </Container>
