@@ -4,7 +4,6 @@ import Button from "commons/Button";
 import Image from "commons/Image.js";
 //Estilo
 import { useStyles } from "./Niveles.style.js";
-
 const Niveles = () => {
   const classes = useStyles();
   return (
