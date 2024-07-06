@@ -32,10 +32,13 @@
     "blk-design-system-react"
   ],
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.21",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.4.3",
-    "bootstrap": "4.6.2",
+    "bootstrap": "^4.6.2",
     "chart.js": "2.9.4",
     "classnames": "2.3.1",
     "moment": "2.29.4",
@@ -49,7 +52,7 @@
     "react-jss": "^10.10.0",
     "react-router-dom": "6.11.1",
     "react-scripts": "^3.0.1",
-    "reactstrap": "8.10.0",
+    "reactstrap": "^8.10.0",
     "sass": "1.62.1",
     "web-vitals": "3.3.1"
   },

@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
-import Button from "commons/Button";
+import Button from "commons/Button.js";
 import Image from "commons/Image.js";
 //Estilo
 import { useStyles } from "./Niveles.style.js";
@@ -36,19 +36,19 @@ const Niveles = () => {
               className={classes.button}
               color="success"
               value="Principiante"
-              // href={"/principiante"}
+              href={"/principiante"}
             ></Button>
             <Button
               className={classes.button}
               color="success"
               value="Intermedio"
-              // href={"/intermedio"}
+              href={"/intermedio"}
             ></Button>
             <Button
               className={classes.button}
               color="success"
               value={"Avanzado"}
-              // href={"/avanzado"}
+              href={"/avanzado"}
             ></Button>
           </Col>
         </Row>

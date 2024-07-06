@@ -11,8 +11,8 @@ export const useStyles = createUseStyles({
     width: "80%",
     height: "120px",
     fontSize: "30px",
-    margin: "8px",
-    padding: "10px",
+    marginTop: "20px",
+    paddingTop: "40px",
   },
   container: {
     alignItems: "center",

@@ -7,11 +7,10 @@ import "assets/scss/blk-design-system-react.scss";
 import "assets/demo/demo.css";
 
 import Index from "views/Index.js";
-import LandingPage from "views/examples/LandingPage.js";
 import Niveles from "views/pages/Niveles/Niveles.js";
-import RegisterPage from "views/examples/RegisterPage.js";
-import ProfilePage from "views/examples/ProfilePage.js";
-
+import Principiante from "views/pages/Principiante/Principiante.js";
+import Intermedio from "views/pages/Intermedio/Intermedio.js";
+import Avanzado from "views/pages/Avanzado/Avanzado.js";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
@@ -20,9 +19,9 @@ root.render(
       <Route path="*" element={<Navigate to="/principal" replace />} />
       <Route path="/principal" element={<Index />} />
       <Route path="/niveles" element={<Niveles />} />
-      <Route path="/landing-page" element={<LandingPage />} />
-      <Route path="/register-page" element={<RegisterPage />} />
-      <Route path="/profile-page" element={<ProfilePage />} />
+      <Route path="/principiante" element={<Principiante />} />
+      <Route path="/intermedio" element={<Intermedio />} />
+      <Route path="/avanzado" element={<Avanzado />} />
     </Routes>
   </BrowserRouter>
 );
