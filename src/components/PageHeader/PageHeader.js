@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 // reactstrap components
 import { Container, Row, Col, Progress } from "reactstrap";
 import Image from "commons/Image.js";
-import Button from "commons/Button";
-import Input from "commons/Input";
+import Input from "commons/Input.js";
+import Button from "commons/Button.js";
+
 //Estilo
 import { useStyles } from "./PagerHeader.style";
 
@@ -15,7 +16,7 @@ export default function PageHeader() {
   const [age, setAge] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
-  // Validacion de campos vacios y 
+  // Validacion de campos vacios y
   useEffect(() => {
     let completedFields = 0;
     if (name.length > 0) completedFields++;
