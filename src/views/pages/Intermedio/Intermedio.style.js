@@ -8,31 +8,47 @@ export const useStyles = createUseStyles({
     color: "white",
     justifyContent: "center",
     textAlign: "center",
-    margin: "16px",
+    margin: "8px",
+  },
+  container: {
+    display: "flex",
+    alignItems: "center",
+    margin: "0 auto",
+    width: "90%",
+  },
+  leftContainer: {
+    width: "60%",
+  },
+  rightContainer: {
+    width: "60%",
   },
   table: {
-    width: "80%",
-    marginTop: "16px",
-    margin: "6px auto",
+    width: "70%",
+    margin: "4px auto",
   },
-
+  row: {
+    display: "flex",
+    border: "1px solid #ccc",
+  },
   col: {
     display: "flex",
     border: "1px solid #ccc",
-    padding: "1px",
-    fontSize: "60px",
     color: "white",
-    justifyContent: "center",
     textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "52px",
+    height: "128px",
+    paddingTop: "2px",
+    paddingBottom: "2px",
   },
-
   button: {
     width: "280px",
     height: "90px auto",
     fontSize: "24px",
   },
   root: {
-    marginTop: "24px",
+    marginTop: "8px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
