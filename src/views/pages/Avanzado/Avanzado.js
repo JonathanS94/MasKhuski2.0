@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
+import Image from "commons/Image";
 import Button from "commons/Button";
 import { Table, Row, Col } from "reactstrap";
 import TableBody from "@mui/material/TableBody";
 import { useStyles } from "./Avanzado.style.js";
 import BilletesMonedas from "components/BilletesMonedas/BilletesMonedas.js";
+import Cronometro from "components/Cronometro/Cronometro.js";
 
 const Avanzado = () => {
   const classes = useStyles([]);
   const [values, setValues] = useState([]);
+  const [draggedImages, setDraggedImages] = useState(null);
   useEffect(() => {
     const initialValue = [
       "$10.60",
@@ -34,33 +37,63 @@ const Avanzado = () => {
     }
     return shuffledArray;
   };
+  //Arrastre Durante el Movimiento
+  const onDragOver = (e) => {
+    e.preventDefault();
+  };
+  //Soltar en una celda especifica
+  const onDrop = (e, index) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("imagenes");
+    const src = JSON.parse(data);
+    const newValues = [...values];
+    newValues[index] = src;
+    setValues(newValues);
+  };
+  // Agrupar Imagenes
+  const renderizarImagenes = (imagenes) =>
+    imagenes.map((imagen, indice) => {
+      const esBillete = imagen.startsWith("billete");
+      const ruta = esBillete ? `billetes/${imagen}` : `monedas/${imagen}`;
+      return (
+        <Image
+          key={indice}
+          className={esBillete ? classes.imgBillete : classes.imgMoneda}
+          src={require(`assets/img/${ruta}`)}
+          alt={`imagen${indice + 1}`}
+        />
+      );
+    });
+
   return (
     <div>
       <div className={classes.h1}>NIVEL AVANZADO</div>
+      <Cronometro />
       <div className={classes.container}>
         <div className={classes.leftContainer}>
-          <BilletesMonedas />
+          <BilletesMonedas onDragStart={setDraggedImages} />
         </div>
         <div className={classes.rightContainer}>
           <Table className={classes.table}>
             <TableBody>
-              <Row className={classes.row}>
-                <Col className={classes.col}>{values[0]}</Col>
-                <Col className={classes.col}>{values[1]}</Col>
-              </Row>
-              <Row className={classes.row}>
-                <Col className={classes.col}>{values[2]}</Col>
-                <Col className={classes.col}>{values[3]}</Col>
-              </Row>
-              <Row className={classes.row}>
-                <Col className={classes.col}>{values[4]}</Col>
-                <Col className={classes.col}>{values[5]}</Col>
-              </Row>
-
-              <Row className={classes.row}>
-                <Col className={classes.col}>{values[6]}</Col>
-                <Col className={classes.col}>{values[7]}</Col>
-              </Row>
+              {Array.from({ length: 4 }, (_, rowIndex) => (
+                <Row key={rowIndex} className={classes.row}>
+                  {values
+                    .slice(rowIndex * 2, rowIndex * 2 + 2)
+                    .map((value, colIndex) => (
+                      <Col
+                        key={colIndex}
+                        className={classes.col}
+                        onDragOver={onDragOver}
+                        onDrop={(e) => onDrop(e, rowIndex * 2 + colIndex)}
+                      >
+                        {typeof value === "string"
+                          ? value
+                          : renderizarImagenes(value)}
+                      </Col>
+                    ))}
+                </Row>
+              ))}
             </TableBody>
           </Table>
         </div>

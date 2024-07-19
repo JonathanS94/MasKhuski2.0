@@ -8,7 +8,7 @@ export const useStyles = createUseStyles({
     color: "white",
     justifyContent: "center",
     textAlign: "center",
-    margin: "8px",
+    margin: "4px",
   },
   container: {
     display: "flex",
@@ -33,14 +33,13 @@ export const useStyles = createUseStyles({
     border: "1px solid #ccc",
   },
   col: {
-    display: "flex",
     border: "1px solid #ccc",
     color: "white",
     textAlign: "center",
     alignItems: "center",
     justifyContent: "center",
     fontSize: "52px",
-    height: "128px",
+    height: "128px auto",
     paddingTop: "2px",
     paddingBottom: "2px",
   },
@@ -54,5 +53,14 @@ export const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  imgBillete: {
+    width: "90%",
+    padding: "0 auto",
+  },
+  imgMoneda: {
+    width: "25%",
+    padding: "0 auto",
   },
 });
