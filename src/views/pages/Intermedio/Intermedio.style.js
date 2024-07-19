@@ -31,14 +31,13 @@ export const useStyles = createUseStyles({
     border: "1px solid #ccc",
   },
   col: {
-    display: "flex",
     border: "1px solid #ccc",
     color: "white",
     textAlign: "center",
     alignItems: "center",
     justifyContent: "center",
     fontSize: "52px",
-    height: "128px",
+    height: "128px auto",
     paddingTop: "2px",
     paddingBottom: "2px",
   },
@@ -52,5 +51,9 @@ export const useStyles = createUseStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  img: {
+    width: "75%",
+    padding: "0 auto",
   },
 });

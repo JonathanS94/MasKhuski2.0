@@ -10,6 +10,7 @@ export const useStyles = createUseStyles({
     border: "1px solid #ccc",
   },
   col: {
+    
     border: "1px solid #ccc",
     textAlign: "center",
     alignItems: "center",

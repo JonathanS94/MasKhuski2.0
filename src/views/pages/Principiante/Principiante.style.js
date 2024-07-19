@@ -37,4 +37,8 @@ export const useStyles = createUseStyles({
     justifyContent: "center",
     alignItems: "center",
   },
+  img: {
+    margin: "2px auto",
+    width: "35%",
+  },
 });
