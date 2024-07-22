@@ -103,7 +103,7 @@ const Avanzado = () => {
           className={classes.button}
           color="success"
           value="Enviar Repuesta"
-          //href={"/"}
+          href={"/resultado"}
         ></Button>
       </div>
     </div>

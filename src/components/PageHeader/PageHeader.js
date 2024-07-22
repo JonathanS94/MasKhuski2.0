@@ -9,7 +9,7 @@ import Button from "commons/Button.js";
 //Estilo
 import { useStyles } from "./PagerHeader.style";
 
-export default function PageHeader() {
+const PageHeader =()=> {
   const classes = useStyles();
   //Componentes Usuario
   const [name, setName] = useState("");
@@ -52,7 +52,6 @@ export default function PageHeader() {
       <div className="squares square5" />
       <div className="squares square6" />
       <div className="squares square6" />
-
       <Container className={classes.container}>
         <Row className="w-100">
           <Col
@@ -100,4 +99,5 @@ export default function PageHeader() {
       </Container>
     </div>
   );
-}
+};
+export default PageHeader;
