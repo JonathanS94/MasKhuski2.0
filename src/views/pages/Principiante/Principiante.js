@@ -6,6 +6,10 @@ import { useStyles } from "./Principiante.style.js";
 import Monedas from "components/Monedas/Monedas";
 import Cronometro from "components/Cronometro/Cronometro.js";
 
+import "assets/css/nucleo-icons.css";
+import "assets/scss/blk-design-system-react.scss";
+import "assets/demo/demo.css";
+
 const Principiante = () => {
   const classes = useStyles();
   const [values, setValues] = useState([]);
@@ -93,6 +97,7 @@ const Principiante = () => {
           className={classes.button}
           color="success"
           value="Enviar Repuesta"
+          href={"/resultado"}
         />
       </div>
     </div>
