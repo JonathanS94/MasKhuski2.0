@@ -8,9 +8,27 @@ import BilletesMonedas from "components/BilletesMonedas/BilletesMonedas.js";
 import Cronometro from "components/Cronometro/Cronometro.js";
 
 const Avanzado = () => {
-  const classes = useStyles([]);
+  const classes = useStyles();
   const [values, setValues] = useState([]);
+  const [initialValues, setInitialValues] = useState([]); // Guardar valores iniciales
   const [draggedImages, setDraggedImages] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0); // Contador de aciertos
+  const [incorrectCount, setIncorrectCount] = useState(0); // Contador de errores
+
+  // Mapeo de las billetes a sus valores numéricos
+  const Valores = {
+    "moneda1.png": 1.0,
+    "moneda25.png": 0.25,
+    "moneda10.png": 0.1,
+    "moneda5.png": 0.05,
+    "moneda50.png": 0.5,
+    "billete2.png": 2,
+    "billete5.png": 5,
+    "billete10.png": 10,
+    "billete20.png": 20,
+    "billete50.png": 50,
+  };
+  //Arreglo Numerico
   useEffect(() => {
     const initialValue = [
       "$10.60",
@@ -24,6 +42,7 @@ const Avanzado = () => {
     ];
     const shuffledValue = shuffleArray(initialValue);
     setValues(shuffledValue);
+    setInitialValues(shuffledValue); // Guardar los valores iniciales
   }, []);
   // Función para mezclar un array
   const shuffleArray = (array) => {
@@ -37,7 +56,7 @@ const Avanzado = () => {
     }
     return shuffledArray;
   };
-  //Arrastre Durante el Movimiento
+  // Evento de arrastre sobre la celda
   const onDragOver = (e) => {
     e.preventDefault();
   };
@@ -49,8 +68,17 @@ const Avanzado = () => {
     const newValues = [...values];
     newValues[index] = src;
     setValues(newValues);
+    // Mostrar la suma de valores para la celda actual
+    const suma = calcularSumaValores(src);
+    alert(`Celda ${index + 1}: Suma de valores = $${suma.toFixed(2)}`);
   };
-  // Agrupar Imagenes
+  // Función para calcular la suma de las monedas
+  const calcularSumaValores = (imagenes) => {
+    return imagenes.reduce((suma, imagen) => {
+      return suma + (Valores[imagen] || 0);
+    }, 0);
+  };
+  // Función para renderizar las imágenes
   const renderizarImagenes = (imagenes) =>
     imagenes.map((imagen, indice) => {
       const esBillete = imagen.startsWith("billete");
@@ -64,6 +92,37 @@ const Avanzado = () => {
         />
       );
     });
+  // Función para comprobar si los emparejamientos son correctos
+  const checkMatches = () => {
+    let correct = 0;
+    let incorrect = 0;
+
+    values.forEach((value, index) => {
+      // Comparar el valor inicial con el valor actual en la celda
+      if (Array.isArray(value)) {
+        const suma = calcularSumaValores(value);
+        const valorInicial = initialValues[index];
+        const valorEsperado = parseFloat(valorInicial.slice(1));
+
+        if (suma.toFixed(2) === valorEsperado.toFixed(2)) {
+          correct += 1; // Incrementa el contador de aciertos si coinciden
+        } else {
+          incorrect += 1; // Incrementa el contador de errores si no coinciden
+        }
+      }
+    });
+
+    setCorrectCount(correct);
+    setIncorrectCount(incorrect);
+
+    if (correct === 8) {
+      alert("¡Felicidades! ¡Todos los emparejamientos son correctos!");
+    } else {
+      alert(
+        `Tienes emparejamientos ${correct} correctos y ${incorrect} incorrectos.`
+      );
+    }
+  };
 
   return (
     <div>
@@ -103,7 +162,7 @@ const Avanzado = () => {
           className={classes.button}
           color="success"
           value="Enviar Repuesta"
-          href={"/resultado"}
+          onClick={checkMatches} // Llamar a la función checkMatches al hacer clic
         ></Button>
       </div>
     </div>
