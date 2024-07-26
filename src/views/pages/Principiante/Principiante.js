@@ -6,21 +6,31 @@ import { useStyles } from "./Principiante.style.js";
 import Monedas from "components/Monedas/Monedas";
 import Cronometro from "components/Cronometro/Cronometro.js";
 
-import "assets/css/nucleo-icons.css";
-import "assets/scss/blk-design-system-react.scss";
-import "assets/demo/demo.css";
-
 const Principiante = () => {
   const classes = useStyles();
   const [values, setValues] = useState([]);
+  const [initialValues, setInitialValues] = useState([]); // Guardar valores iniciales
   const [draggedImages, setDraggedImages] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0); // Contador de aciertos
+  const [incorrectCount, setIncorrectCount] = useState(0); // Contador de errores
 
+  // Mapeo de las monedas a sus valores numéricos
+  const monedaValores = {
+    "moneda1.png": 1.0,
+    "moneda25.png": 0.25,
+    "moneda10.png": 0.1,
+    "moneda5.png": 0.05,
+    "moneda50.png": 0.5,
+  };
+
+  //
   useEffect(() => {
     const initialValue = ["$1.25", "$1.05", "$0.35", "$0.60", "$0.15", "$0.55"];
     const shuffledValue = shuffleArray(initialValue);
     setValues(shuffledValue);
+    setInitialValues(shuffledValue); // Guardar los valores iniciales
   }, []);
-  // Función para mezclar elementos de un array
+  // Función para mezclar los elementos de un array
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -32,11 +42,13 @@ const Principiante = () => {
     }
     return shuffledArray;
   };
-  //Arrastre Durante el Movimiento
+
+  // Evento de arrastre sobre la celda
   const onDragOver = (e) => {
     e.preventDefault();
   };
-  //Soltar en una celda especifica
+
+  // Evento de soltar sobre una celda específica
   const onDrop = (e, index) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("imagenes");
@@ -44,8 +56,18 @@ const Principiante = () => {
     const newValues = [...values];
     newValues[index] = src;
     setValues(newValues);
+    // Mostrar la suma de monedas para la celda actual
+    /*const suma = calcularSumaMonedas(src);
+    alert(`Celda ${index + 1}: Suma de monedas = $${suma.toFixed(2)}`);*/
   };
-  //Agrupar Imagenes
+
+  // Función para calcular la suma de las monedas
+  const calcularSumaMonedas = (imagenes) => {
+    return imagenes.reduce((suma, imagen) => {
+      return suma + (monedaValores[imagen] || 0);
+    }, 0);
+  };
+  // Función para renderizar las imágenes
   const renderizarImagenes = (imagenes) => {
     return imagenes.map((imagen, indice) => (
       <img
@@ -55,6 +77,37 @@ const Principiante = () => {
         alt={`moneda${indice + 1}`}
       />
     ));
+  };
+  // Función para comprobar si los emparejamientos son correctos
+  const checkMatches = () => {
+    let correct = 0;
+    let incorrect = 0;
+
+    values.forEach((value, index) => {
+      // Comparar el valor inicial con el valor actual en la celda
+      if (Array.isArray(value)) {
+        const suma = calcularSumaMonedas(value);
+        const valorInicial = initialValues[index];
+        const valorEsperado = parseFloat(valorInicial.slice(1));
+
+        if (suma.toFixed(2) === valorEsperado.toFixed(2)) {
+          correct += 1; // Incrementa el contador de aciertos si coinciden
+        } else {
+          incorrect += 1; // Incrementa el contador de errores si no coinciden
+        }
+      }
+    });
+
+    setCorrectCount(correct);
+    setIncorrectCount(incorrect);
+
+    if (correct === 6) {
+      alert("¡Felicidades! ¡Todos los emparejamientos son correctos!");
+    } else {
+      alert(
+        `Tienes emparejamientos ${correct} correctos y ${incorrect} incorrectos.`
+      );
+    }
   };
 
   return (
@@ -96,8 +149,8 @@ const Principiante = () => {
         <Button
           className={classes.button}
           color="success"
-          value="Enviar Repuesta"
-          href={"/resultado"}
+          value="Enviar Respuesta"
+          onClick={checkMatches} // Llamar a la función checkMatches al hacer clic
         />
       </div>
     </div>
