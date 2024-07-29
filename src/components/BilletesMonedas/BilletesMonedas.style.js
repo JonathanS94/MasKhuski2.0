@@ -10,7 +10,6 @@ export const useStyles = createUseStyles({
     border: "1px solid #ccc",
   },
   col: {
-    
     border: "1px solid #ccc",
     textAlign: "center",
     alignItems: "center",
@@ -24,7 +23,7 @@ export const useStyles = createUseStyles({
     padding: "0 auto",
   },
   imgMoneda: {
-    width: "25%",
+    width: "30%",
     padding: "0 auto",
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "commons/Image";
 import Button from "commons/Button";
 import { Table, Row, Col } from "reactstrap";
@@ -6,15 +6,21 @@ import TableBody from "@mui/material/TableBody";
 import { useStyles } from "./Avanzado.style.js";
 import BilletesMonedas from "components/BilletesMonedas/BilletesMonedas.js";
 import Cronometro from "components/Cronometro/Cronometro.js";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const Avanzado = () => {
   const classes = useStyles();
   const [values, setValues] = useState([]);
-  const [initialValues, setInitialValues] = useState([]); // Guardar valores iniciales
+  const [initialValues, setInitialValues] = useState([]);
   const [draggedImages, setDraggedImages] = useState(null);
   const [correctCount, setCorrectCount] = useState(0); // Contador de aciertos
   const [incorrectCount, setIncorrectCount] = useState(0); // Contador de errores
-
+  const [results, setResults] = useState(Array(8).fill(null));
+  const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [timeElapsed, setTimeElapsed] = useState(0); // Para guardar el tiempo transcurrido
+  const cronometroRef = useRef();
+  const [score, setScore] = useState(0);
   // Mapeo de las billetes a sus valores numéricos
   const Valores = {
     "moneda1.png": 1.0,
@@ -68,9 +74,6 @@ const Avanzado = () => {
     const newValues = [...values];
     newValues[index] = src;
     setValues(newValues);
-    // Mostrar la suma de valores para la celda actual
-    const suma = calcularSumaValores(src);
-    alert(`Celda ${index + 1}: Suma de valores = $${suma.toFixed(2)}`);
   };
   // Función para calcular la suma de las monedas
   const calcularSumaValores = (imagenes) => {
@@ -96,38 +99,38 @@ const Avanzado = () => {
   const checkMatches = () => {
     let correct = 0;
     let incorrect = 0;
-
+    const newResults = [];
     values.forEach((value, index) => {
       // Comparar el valor inicial con el valor actual en la celda
       if (Array.isArray(value)) {
         const suma = calcularSumaValores(value);
         const valorInicial = initialValues[index];
         const valorEsperado = parseFloat(valorInicial.slice(1));
-
         if (suma.toFixed(2) === valorEsperado.toFixed(2)) {
           correct += 1; // Incrementa el contador de aciertos si coinciden
+          newResults[index] = true; // Emparejamiento correcto
         } else {
           incorrect += 1; // Incrementa el contador de errores si no coinciden
+          newResults[index] = false; // Emparejamiento incorrecto
         }
       }
     });
 
     setCorrectCount(correct);
     setIncorrectCount(incorrect);
-
-    if (correct === 8) {
-      alert("¡Felicidades! ¡Todos los emparejamientos son correctos!");
-    } else {
-      alert(
-        `Tienes emparejamientos ${correct} correctos y ${incorrect} incorrectos.`
-      );
-    }
+    setResults(newResults);
+    setIsButtonVisible(false);
+    setScore(correct * 4);
+    localStorage.setItem("score", correct * 4);
+    // Pausar el cronómetro y guardar el tiempo
+    cronometroRef.current.pause();
+    setTimeElapsed(cronometroRef.current.getTime());
   };
 
   return (
     <div>
-      <div className={classes.h1}>NIVEL AVANZADO</div>
-      <Cronometro />
+      <div className={classes.h1}>NIVEL &nbsp; AVANZADO</div>
+      <Cronometro ref={cronometroRef} />
       <div className={classes.container}>
         <div className={classes.leftContainer}>
           <BilletesMonedas onDragStart={setDraggedImages} />
@@ -149,6 +152,19 @@ const Avanzado = () => {
                         {typeof value === "string"
                           ? value
                           : renderizarImagenes(value)}
+                        {results[rowIndex * 2 + colIndex] !== null && (
+                          <span className={classes.icon}>
+                            {results[rowIndex * 2 + colIndex] ? (
+                              <CheckCircleIcon
+                                style={{ color: "green", fontSize: "32px" }}
+                              />
+                            ) : (
+                              <CancelIcon
+                                style={{ color: "red", fontSize: "32px" }}
+                              />
+                            )}
+                          </span>
+                        )}
                       </Col>
                     ))}
                 </Row>
@@ -158,12 +174,20 @@ const Avanzado = () => {
         </div>
       </div>
       <div className={classes.root}>
+        {isButtonVisible && (
+          <Button
+            className={classes.button}
+            color="success"
+            value="Enviar Respuesta"
+            onClick={checkMatches}
+          />
+        )}
         <Button
           className={classes.button}
           color="success"
-          value="Enviar Repuesta"
-          onClick={checkMatches} // Llamar a la función checkMatches al hacer clic
-        ></Button>
+          value="Ver Puntaje Obtenido"
+          href={"/resultado"}
+        />
       </div>
     </div>
   );

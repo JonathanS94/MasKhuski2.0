@@ -1,13 +1,23 @@
-import React from "react";
-// reactstrap components
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import Image from "commons/Image.js";
 import Button from "commons/Button.js";
-//Estilo
 import { useStyles } from "./Resultado.style.js";
+import { useNavigate } from "react-router-dom";
 
 const Resultado = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const [score, setScore] = useState(0);
+
+  // Obtener el puntaje de localStorage cuando el componente se monta
+  useEffect(() => {
+    const storedScore = localStorage.getItem("score");
+    if (storedScore !== null) {
+      setScore(parseInt(storedScore, 10));
+    }
+  }, []);
+
   const [squares1to6, setSquares1to6] = React.useState("");
   const [squares7and8, setSquares7and8] = React.useState("");
   React.useEffect(() => {
@@ -37,6 +47,11 @@ const Resultado = () => {
         "deg)"
     );
   };
+  // Función para regresar a la página anterior
+  const handleGoBack = () => {
+    navigate(-1); // Navegar a la página anterior
+  };
+
   return (
     <>
       <div className="wrapper">
@@ -81,7 +96,7 @@ const Resultado = () => {
           style={{ transform: squares7and8 }}
         />
         <div className="page-header">
-          <div className={classes.h1}>PUNTAJE - FINAL</div>
+          <div className={classes.h1}>PUNTAJE &nbsp; OBTENIDO</div>
           <Container className={classes.container}>
             <Row>
               <Col>
@@ -91,14 +106,14 @@ const Resultado = () => {
                 />
               </Col>
               <Col>
-                <div className={classes.score}>100/100</div>
+                <div className={classes.score}>{score}</div>
               </Col>
               <Col>
                 <Button
                   className={classes.button}
                   color="info"
                   value="Volver a intertarlo"
-                  href={"/principiante"}
+                  onClick={handleGoBack}
                 ></Button>
                 <Button
                   className={classes.button}
@@ -110,7 +125,7 @@ const Resultado = () => {
                   className={classes.button}
                   color="info"
                   value={"Tabla de Puntajes"}
-                  href={"/"}
+                  href={"/puntajes"}
                 ></Button>
               </Col>
             </Row>

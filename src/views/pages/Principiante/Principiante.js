@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Button from "commons/Button";
 import { Table, Row, Col } from "reactstrap";
 import TableBody from "@mui/material/TableBody";
 import { useStyles } from "./Principiante.style.js";
 import Monedas from "components/Monedas/Monedas";
 import Cronometro from "components/Cronometro/Cronometro.js";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const Principiante = () => {
   const classes = useStyles();
@@ -13,7 +15,11 @@ const Principiante = () => {
   const [draggedImages, setDraggedImages] = useState(null);
   const [correctCount, setCorrectCount] = useState(0); // Contador de aciertos
   const [incorrectCount, setIncorrectCount] = useState(0); // Contador de errores
-
+  const [results, setResults] = useState(Array(6).fill(null));
+  const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [timeElapsed, setTimeElapsed] = useState(0); // Para guardar el tiempo transcurrido
+  const cronometroRef = useRef();
+  const [score, setScore] = useState(0); // Estado para el puntaje
   // Mapeo de las monedas a sus valores numéricos
   const monedaValores = {
     "moneda1.png": 1.0,
@@ -22,8 +28,7 @@ const Principiante = () => {
     "moneda5.png": 0.05,
     "moneda50.png": 0.5,
   };
-
-  //
+  // Inicializar valores
   useEffect(() => {
     const initialValue = ["$1.25", "$1.05", "$0.35", "$0.60", "$0.15", "$0.55"];
     const shuffledValue = shuffleArray(initialValue);
@@ -78,42 +83,94 @@ const Principiante = () => {
       />
     ));
   };
+  // Función para calcular puntos adicionales basados en el tiempo
+  const calcularPuntosBonus = (tiempo) => {
+    const minutos = Math.floor(tiempo / 60);
+    const segundos = tiempo % 60;
+    const tiempoTotal = minutos * 60 + segundos; // Convertir tiempo a segundos
+
+    if (tiempoTotal <= 60) {
+      // 0 seg - 1 min
+      return 4;
+    } else if (tiempoTotal <= 120) {
+      // 1 min 1 seg - 2 min
+      return 3;
+    } else if (tiempoTotal <= 180) {
+      // 2 min 1 seg - 3 min
+      return 2;
+    } else if (tiempoTotal <= 240) {
+      // 3 min 1 seg - 4 min
+      return 1;
+    }
+    return 0; // No bonus si el tiempo es mayor a 4 minutos
+  };
   // Función para comprobar si los emparejamientos son correctos
   const checkMatches = () => {
     let correct = 0;
     let incorrect = 0;
-
+    const newResults = [];
     values.forEach((value, index) => {
       // Comparar el valor inicial con el valor actual en la celda
       if (Array.isArray(value)) {
         const suma = calcularSumaMonedas(value);
         const valorInicial = initialValues[index];
         const valorEsperado = parseFloat(valorInicial.slice(1));
-
         if (suma.toFixed(2) === valorEsperado.toFixed(2)) {
           correct += 1; // Incrementa el contador de aciertos si coinciden
+          newResults[index] = true; // Emparejamiento correcto
         } else {
           incorrect += 1; // Incrementa el contador de errores si no coinciden
+          newResults[index] = false; // Emparejamiento incorrecto
         }
       }
     });
-
+    // Función para guardar los datos en localStorage
+    const guardarDatosJuego = (nombre, edad, nivel, tiempo, puntaje) => {
+      const datosGuardados =
+        JSON.parse(localStorage.getItem("puntajesAltos")) || [];
+      const nuevoDato = {
+        nombre,
+        edad,
+        nivel,
+        tiempo,
+        puntaje,
+      };
+      datosGuardados.push(nuevoDato);
+      localStorage.setItem("puntajesAltos", JSON.stringify(datosGuardados));
+    };
     setCorrectCount(correct);
     setIncorrectCount(incorrect);
+    setResults(newResults);
+    setIsButtonVisible(false);
 
+    // Calcular puntaje base
+    let puntajeBase = correct * 2;
+
+    // Pausar el cronómetro y guardar el tiempo
+    cronometroRef.current.pause();
+    setTimeElapsed(cronometroRef.current.getTime());
+    const tiempoTotal = cronometroRef.current.getTime();
+
+    // Calcular puntos bonus si todos los aciertos son correctos
+    let puntosBonus = 0;
     if (correct === 6) {
+      puntosBonus = calcularPuntosBonus(tiempoTotal);
+      puntajeBase += puntosBonus; // Sumar puntos bonus al puntaje base
+    }
+    setScore(puntajeBase); // Calcular el puntaje total
+    localStorage.setItem("score", puntajeBase); // Almacenar el puntaje en localStorage
+
+    //Alerta de aciertos
+    /* if (correct === 6) {
       alert("¡Felicidades! ¡Todos los emparejamientos son correctos!");
     } else {
-      alert(
-        `Tienes emparejamientos ${correct} correctos y ${incorrect} incorrectos.`
-      );
-    }
+      alert("Tienes emparejamientos ${2 * correct} correctos y ${incorrect} incorrectos.");}*/
   };
 
   return (
     <div>
-      <div className={classes.h1}>NIVEL PRINCIPIANTE</div>
-      <Cronometro />
+      <div className={classes.h1}>NIVEL &nbsp; PRINCIPIANTE</div>
+      <Cronometro ref={cronometroRef} />
       <Table className={classes.table}>
         <TableBody>
           <Row className={classes.row}>
@@ -125,6 +182,17 @@ const Principiante = () => {
                 onDrop={(e) => onDrop(e, index)}
               >
                 {typeof value === "string" ? value : renderizarImagenes(value)}
+                {results[index] !== null && (
+                  <span className={classes.icon}>
+                    {results[index] ? (
+                      <CheckCircleIcon
+                        style={{ color: "green", fontSize: "32" }}
+                      />
+                    ) : (
+                      <CancelIcon style={{ color: "red", fontSize: "32" }} />
+                    )}
+                  </span>
+                )}
               </Col>
             ))}
           </Row>
@@ -137,6 +205,17 @@ const Principiante = () => {
                 onDrop={(e) => onDrop(e, index + 3)}
               >
                 {typeof value === "string" ? value : renderizarImagenes(value)}
+                {results[index + 3] !== null && (
+                  <span className={classes.icon}>
+                    {results[index + 3] ? (
+                      <CheckCircleIcon
+                        style={{ color: "green", fontSize: "32" }}
+                      />
+                    ) : (
+                      <CancelIcon style={{ color: "red", fontSize: "32" }} />
+                    )}
+                  </span>
+                )}
               </Col>
             ))}
           </Row>
@@ -146,11 +225,19 @@ const Principiante = () => {
         <Monedas onDragStart={setDraggedImages} />
       </div>
       <div className={classes.root}>
+        {isButtonVisible && (
+          <Button
+            className={classes.button}
+            color="success"
+            value="Enviar Respuesta"
+            onClick={checkMatches}
+          />
+        )}
         <Button
           className={classes.button}
           color="success"
-          value="Enviar Respuesta"
-          onClick={checkMatches} // Llamar a la función checkMatches al hacer clic
+          value="Ver Puntaje Obtenido"
+          href={"/resultado"}
         />
       </div>
     </div>
