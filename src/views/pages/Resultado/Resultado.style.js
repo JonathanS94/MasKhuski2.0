@@ -12,26 +12,24 @@ export const useStyles = createUseStyles({
   img: {
     width: "400px",
     marginTop: "20px",
-    paddingTop: "100px",
   },
   score: {
     fontSize: "50px",
     fontFamily: "Poppins",
     color: "white",
-    textAlign: "center",
-    margin: "20px 0",
+    margin: "20px",
     paddingTop: "150px",
   },
   button: {
-    width: "80%",
-    height: "120px auto",
+    width: "100%",
     fontSize: "30px",
     margin: "20px auto",
     padding: "20px",
   },
   container: {
     display: "flex",
-    marginTop: "10px",
-    marginBottom: "40px",
+    justifyContent: "center",
+    textAlign: "center",
+    marginTop: "60px",
   },
 });

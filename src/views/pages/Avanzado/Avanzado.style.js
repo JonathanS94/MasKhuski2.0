@@ -40,8 +40,6 @@ export const useStyles = createUseStyles({
     justifyContent: "center",
     fontSize: "52px",
     height: "128px auto",
-    paddingTop: "2px",
-    paddingBottom: "2px",
   },
   button: {
     width: "280px",
@@ -60,7 +58,7 @@ export const useStyles = createUseStyles({
     padding: "0 auto",
   },
   imgMoneda: {
-    width: "25%",
+    width: "30%",
     padding: "0 auto",
   },
 });
