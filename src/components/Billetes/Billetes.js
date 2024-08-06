@@ -1,12 +1,76 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "commons/Image";
 import { Table, Row, Col } from "reactstrap";
 import { TableBody } from "@mui/material";
 //Estilos css
 import { useStyles } from "./Billetes.style.js";
 
-const Billetes = ({ onDragStart }) => {
+const Billetes = ({ onDragStart, onSumasCalculated }) => {
   const classes = useStyles();
+  const billetes = [
+    "billete1.png",
+    "billete5.png",
+    "billete10.png",
+    "billete20.png",
+    "billete50.png",
+  ];
+
+  const [parejasMezcladas, setParejasMezcladas] = useState([]);
+  const [sumasParejas, setSumasParejas] = useState([]);
+
+  const billeteValores = {
+    "billete1.png": 1,
+    "billete2.png": 2,
+    "billete5.png": 5,
+    "billete10.png": 10,
+    "billete20.png": 20,
+    "billete50.png": 50,
+  };
+
+  useEffect(() => {
+    const generadas = generarParejasAleatorias(8);
+    const sumas = generadas.map((pareja) => calcularSumaPareja(pareja));
+    setParejasMezcladas(generadas);
+    setSumasParejas(sumas);
+    if (onSumasCalculated) {
+      onSumasCalculated(sumas.map((suma) => `$${suma.toFixed(2)}`));
+    }
+  }, [onSumasCalculated]);
+
+  const generarParejasAleatorias = (numeroDeParejas) => {
+    const parejasUnicas = new Set();
+    while (parejasUnicas.size < numeroDeParejas) {
+      const pareja = seleccionarParejaAleatoria();
+      if (!parejasUnicas.has(pareja.toString())) {
+        parejasUnicas.add(pareja.toString());
+      }
+    }
+    return Array.from(parejasUnicas).map((pareja) => pareja.split(","));
+  };
+  const seleccionarParejaAleatoria = () => {
+    const indices = generarIndicesAleatorios();
+    const primerBillete = billetes[indices[0]];
+    const segundoBillete = billetes[indices[1]];
+    return [primerBillete, segundoBillete];
+  };
+
+  const generarIndicesAleatorios = () => {
+    const indices = [];
+    while (indices.length < 2) {
+      const index = Math.floor(Math.random() * billetes.length);
+      if (!indices.includes(index)) {
+        indices.push(index);
+      }
+    }
+    return indices;
+  };
+
+  const calcularSumaPareja = (pareja) => {
+    return pareja.reduce(
+      (suma, imagen) => suma + (billeteValores[imagen] || 0),
+      0
+    );
+  };
   //Inicia el evento de arrastre
   const handleDragStart = (e, imagenes) => {
     e.dataTransfer.setData("imagenes", JSON.stringify(imagenes));
@@ -24,88 +88,54 @@ const Billetes = ({ onDragStart }) => {
     ));
   return (
     <Table className={classes.table}>
-      <TableBody>
-        <Row className={classes.row}>
+      <Row className={classes.row}>
+        {parejasMezcladas.slice(0, 2).map((pareja, index) => (
           <Col
+            key={index}
             className={classes.col}
             draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete2.png", "billete10.png"])
-            }
+            onDragStart={(e) => handleDragStart(e, pareja)}
           >
-            {renderizarImagenes(["billete2.png", "billete10.png"])}
+            {renderizarImagenes(pareja, sumasParejas[index])}
           </Col>
+        ))}
+      </Row>
+      <Row className={classes.row}>
+        {parejasMezcladas.slice(2, 4).map((pareja, index) => (
           <Col
+            key={index + 3}
             className={classes.col}
             draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete2.png", "billete20.png"])
-            }
+            onDragStart={(e) => handleDragStart(e, pareja)}
           >
-            {renderizarImagenes(["billete2.png", "billete20.png"])}
+            {renderizarImagenes(pareja, sumasParejas[index + 3])}
           </Col>
-        </Row>
-        <Row className={classes.row}>
+        ))}
+      </Row>
+      <Row className={classes.row}>
+        {parejasMezcladas.slice(4, 6).map((pareja, index) => (
           <Col
+            key={index + 3}
             className={classes.col}
             draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete10.png", "billete50.png"])
-            }
+            onDragStart={(e) => handleDragStart(e, pareja)}
           >
-            {renderizarImagenes(["billete10.png", "billete50.png"])}
+            {renderizarImagenes(pareja, sumasParejas[index + 3])}
           </Col>
+        ))}
+      </Row>
+      <Row className={classes.row}>
+        {parejasMezcladas.slice(6, 8).map((pareja, index) => (
           <Col
+            key={index + 3}
             className={classes.col}
             draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete10.png", "billete10.png"])
-            }
+            onDragStart={(e) => handleDragStart(e, pareja)}
           >
-            {renderizarImagenes(["billete10.png", "billete10.png"])}
+            {renderizarImagenes(pareja, sumasParejas[index + 3])}
           </Col>
-        </Row>
-        <Row className={classes.row}>
-          <Col
-            className={classes.col}
-            draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete5.png", "billete20.png"])
-            }
-          >
-            {renderizarImagenes(["billete5.png", "billete20.png"])}
-          </Col>
-          <Col
-            className={classes.col}
-            draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete10.png", "billete5.png"])
-            }
-          >
-            {renderizarImagenes(["billete10.png", "billete5.png"])}
-          </Col>
-        </Row>
-        <Row className={classes.row}>
-          <Col
-            className={classes.col}
-            draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete5.png", "billete2.png"])
-            }
-          >
-            {renderizarImagenes(["billete5.png", "billete2.png"])}
-          </Col>
-          <Col
-            className={classes.col}
-            draggable
-            onDragStart={(e) =>
-              handleDragStart(e, ["billete50.png", "billete20.png"])
-            }
-          >
-            {renderizarImagenes(["billete50.png", "billete20.png"])}
-          </Col>
-        </Row>
-      </TableBody>
+        ))}
+      </Row>
     </Table>
   );
 };

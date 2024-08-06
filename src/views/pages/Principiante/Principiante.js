@@ -17,24 +17,30 @@ const Principiante = () => {
   const [incorrectCount, setIncorrectCount] = useState(0); // Contador de errores
   const [results, setResults] = useState(Array(6).fill(null));
   const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [isScoreButtonVisible, setIsScoreButtonVisible] = useState(false); // Controlar la visibilidad del botón de puntaje
   const [timeElapsed, setTimeElapsed] = useState(0); // Para guardar el tiempo transcurrido
   const cronometroRef = useRef();
   const [score, setScore] = useState(0); // Estado para el puntaje
+  const [sumas, setSumas] = useState([]);
   // Mapeo de las monedas a sus valores numéricos
   const monedaValores = {
-    "moneda1.png": 1.0,
-    "moneda25.png": 0.25,
-    "moneda10.png": 0.1,
     "moneda5.png": 0.05,
+    "moneda10.png": 0.1,
+    "moneda25.png": 0.25,
     "moneda50.png": 0.5,
+    "moneda100.png": 1.0,
   };
   // Inicializar valores
   useEffect(() => {
-    const initialValue = ["$1.25", "$1.05", "$0.35", "$0.60", "$0.15", "$0.55"];
-    const shuffledValue = shuffleArray(initialValue);
-    setValues(shuffledValue);
-    setInitialValues(shuffledValue); // Guardar los valores iniciales
-  }, []);
+    // Esta función debe ser llamada cuando el componente Monedas calcule las sumas
+    if (sumas.length > 0) {
+      // Mezclar las sumas antes de establecer valores
+      const shuffledSumas = shuffleArray(sumas);
+      setValues(shuffledSumas);
+      setInitialValues(shuffledSumas);
+    }
+  }, [sumas]);
+
   // Función para mezclar los elementos de un array
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
@@ -57,13 +63,20 @@ const Principiante = () => {
   const onDrop = (e, index) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("imagenes");
-    const src = JSON.parse(data);
+    if (!data) {
+      console.error("No se recibieron datos en el evento de drop.");
+      return; // Salir si no hay datos
+    }
+    let src;
+    try {
+      src = JSON.parse(data);
+    } catch (error) {
+      console.error("Error al parsear JSON: ", error);
+      return; // Salir si ocurre un error al parsear JSON
+    }
     const newValues = [...values];
     newValues[index] = src;
     setValues(newValues);
-    // Mostrar la suma de monedas para la celda actual
-    /*const suma = calcularSumaMonedas(src);
-    alert(`Celda ${index + 1}: Suma de monedas = $${suma.toFixed(2)}`);*/
   };
 
   // Función para calcular la suma de las monedas
@@ -72,6 +85,7 @@ const Principiante = () => {
       return suma + (monedaValores[imagen] || 0);
     }, 0);
   };
+
   // Función para renderizar las imágenes
   const renderizarImagenes = (imagenes) => {
     return imagenes.map((imagen, indice) => (
@@ -124,24 +138,13 @@ const Principiante = () => {
         }
       }
     });
-    // Función para guardar los datos en localStorage
-    const guardarDatosJuego = (nombre, edad, nivel, tiempo, puntaje) => {
-      const datosGuardados =
-        JSON.parse(localStorage.getItem("puntajesAltos")) || [];
-      const nuevoDato = {
-        nombre,
-        edad,
-        nivel,
-        tiempo,
-        puntaje,
-      };
-      datosGuardados.push(nuevoDato);
-      localStorage.setItem("puntajesAltos", JSON.stringify(datosGuardados));
-    };
+
     setCorrectCount(correct);
     setIncorrectCount(incorrect);
     setResults(newResults);
     setIsButtonVisible(false);
+    // Mostrar el botón de puntaje
+    setIsScoreButtonVisible(true);
 
     // Calcular puntaje base
     let puntajeBase = correct * 2;
@@ -159,12 +162,10 @@ const Principiante = () => {
     }
     setScore(puntajeBase); // Calcular el puntaje total
     localStorage.setItem("score", puntajeBase); // Almacenar el puntaje en localStorage
-
-    //Alerta de aciertos
-    /* if (correct === 6) {
-      alert("¡Felicidades! ¡Todos los emparejamientos son correctos!");
-    } else {
-      alert("Tienes emparejamientos ${2 * correct} correctos y ${incorrect} incorrectos.");}*/
+  };
+  //Función para manejar las sumas calculadas recibidas desde el componente Monedas
+  const handleSumasCalculated = (sumas) => {
+    setSumas(sumas); // Guardar las sumas en el estado
   };
 
   return (
@@ -222,7 +223,10 @@ const Principiante = () => {
         </TableBody>
       </Table>
       <div>
-        <Monedas onDragStart={setDraggedImages} />
+        <Monedas
+          onDragStart={setDraggedImages}
+          onSumasCalculated={setSumas} // Almacena las sumas calculadas
+        />
       </div>
       <div className={classes.root}>
         {isButtonVisible && (
@@ -233,11 +237,19 @@ const Principiante = () => {
             onClick={checkMatches}
           />
         )}
+        {isScoreButtonVisible && (
+          <Button
+            className={classes.button}
+            color="success"
+            value="Ver Puntaje Obtenido"
+            href={"/resultado"}
+          />
+        )}
         <Button
           className={classes.button}
           color="success"
-          value="Ver Puntaje Obtenido"
-          href={"/resultado"}
+          value="Reiniciar el Juego"
+          href={"/principiante"}
         />
       </div>
     </div>

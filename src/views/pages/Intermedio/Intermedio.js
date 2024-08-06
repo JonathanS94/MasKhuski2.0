@@ -17,34 +17,32 @@ const Intermedio = () => {
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [results, setResults] = useState(Array(8).fill(null));
   const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [isScoreButtonVisible, setIsScoreButtonVisible] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const cronometroRef = useRef();
   const [score, setScore] = useState(0);
+  const [sumas, setSumas] = useState([]);
   // Mapeo de las billetes a sus valores numéricos
   const billeteValores = {
+    "billete1.png": 1,
     "billete2.png": 2,
     "billete5.png": 5,
     "billete10.png": 10,
     "billete20.png": 20,
     "billete50.png": 50,
   };
-  //Arreglo Numerico
+  // Inicializar valores
   useEffect(() => {
-    const initialValue = [
-      "$12",
-      "$22",
-      "$60",
-      "$20",
-      "$25",
-      "$15",
-      "$7",
-      "$70",
-    ];
-    const shuffledValue = shuffleArray(initialValue);
-    setValues(shuffledValue);
-    setInitialValues(shuffledValue); // Guardar los valores iniciales
-  }, []);
-  // Función para mezclar elementos de un array
+    // Esta función debe ser llamada cuando el componente Monedas calcule las sumas
+    if (sumas.length > 0) {
+      // Mezclar las sumas antes de establecer valores
+      const shuffledSumas = shuffleArray(sumas);
+      setValues(shuffledSumas);
+      setInitialValues(shuffledSumas);
+    }
+  }, [sumas]);
+
+  // Función para mezclar los elementos de un array
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -56,6 +54,7 @@ const Intermedio = () => {
     }
     return shuffledArray;
   };
+
   // Evento de arrastre sobre la celda
   const onDragOver = (e) => {
     e.preventDefault();
@@ -64,7 +63,17 @@ const Intermedio = () => {
   const onDrop = (e, index) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("imagenes");
-    const src = JSON.parse(data);
+    if (!data) {
+      console.error("No se recibieron datos en el evento de drop.");
+      return; // Salir si no hay datos
+    }
+    let src;
+    try {
+      src = JSON.parse(data);
+    } catch (error) {
+      console.error("Error al parsear JSON: ", error);
+      return; // Salir si ocurre un error al parsear JSON
+    }
     const newValues = [...values];
     newValues[index] = src;
     setValues(newValues);
@@ -132,6 +141,9 @@ const Intermedio = () => {
     setIncorrectCount(incorrect);
     setResults(newResults);
     setIsButtonVisible(false);
+    // Mostrar el botón de puntaje
+    setIsScoreButtonVisible(true);
+
     // Calcular puntaje base
     let puntajeBase = correct * 3;
     // Pausar el cronómetro y guardar el tiempo
@@ -153,7 +165,10 @@ const Intermedio = () => {
       <Cronometro ref={cronometroRef} />
       <div className={classes.container}>
         <div className={classes.leftContainer}>
-          <Billetes onDragStart={setDraggedImages} />
+          <Billetes
+            onDragStart={setDraggedImages}
+            onSumasCalculated={setSumas}
+          />
         </div>
         <div className={classes.rightContainer}>
           <Table className={classes.table}>
@@ -202,11 +217,19 @@ const Intermedio = () => {
             onClick={checkMatches}
           />
         )}
+        {isScoreButtonVisible && (
+          <Button
+            className={classes.button}
+            color="success"
+            value="Ver Puntaje Obtenido"
+            href={"/resultado"}
+          />
+        )}
         <Button
           className={classes.button}
           color="success"
-          value="Ver Puntaje Obtenido"
-          href={"/resultado"}
+          value="Reiniciar el Juego"
+          href={"/intermedio"}
         />
       </div>
     </div>

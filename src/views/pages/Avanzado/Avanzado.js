@@ -14,42 +14,40 @@ const Avanzado = () => {
   const [values, setValues] = useState([]);
   const [initialValues, setInitialValues] = useState([]);
   const [draggedImages, setDraggedImages] = useState(null);
-  const [correctCount, setCorrectCount] = useState(0); // Contador de aciertos
-  const [incorrectCount, setIncorrectCount] = useState(0); // Contador de errores
+  const [correctCount, setCorrectCount] = useState(0);
+  const [incorrectCount, setIncorrectCount] = useState(0);
   const [results, setResults] = useState(Array(8).fill(null));
   const [isButtonVisible, setIsButtonVisible] = useState(true);
-  const [timeElapsed, setTimeElapsed] = useState(0); // Para guardar el tiempo transcurrido
+  const [isScoreButtonVisible, setIsScoreButtonVisible] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const cronometroRef = useRef();
   const [score, setScore] = useState(0);
+  const [sumas, setSumas] = useState([]);
   // Mapeo de las billetes a sus valores numéricos
-  const Valores = {
-    "moneda1.png": 1.0,
-    "moneda25.png": 0.25,
-    "moneda10.png": 0.1,
+  const bmValores = {
     "moneda5.png": 0.05,
+    "moneda10.png": 0.1,
+    "moneda25.png": 0.25,
     "moneda50.png": 0.5,
+    "moneda100.png": 1.0,
+    "billete1.png": 1,
     "billete2.png": 2,
     "billete5.png": 5,
     "billete10.png": 10,
     "billete20.png": 20,
     "billete50.png": 50,
   };
-  //Arreglo Numerico
+  // Inicializar valores
   useEffect(() => {
-    const initialValue = [
-      "$10.60",
-      "$2.30",
-      "$51.05",
-      "$10.50",
-      "$20.75",
-      "$10.15",
-      "$6.10",
-      "$50.35",
-    ];
-    const shuffledValue = shuffleArray(initialValue);
-    setValues(shuffledValue);
-    setInitialValues(shuffledValue); // Guardar los valores iniciales
-  }, []);
+    // Esta función debe ser llamada cuando el componente Monedas calcule las sumas
+    if (sumas.length > 0) {
+      // Mezclar las sumas antes de establecer valores
+      const shuffledSumas = shuffleArray(sumas);
+      setValues(shuffledSumas);
+      setInitialValues(shuffledSumas);
+    }
+  }, [sumas]);
+
   // Función para mezclar un array
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
@@ -70,7 +68,17 @@ const Avanzado = () => {
   const onDrop = (e, index) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("imagenes");
-    const src = JSON.parse(data);
+    if (!data) {
+      console.error("No se recibieron datos en el evento de drop.");
+      return; // Salir si no hay datos
+    }
+    let src;
+    try {
+      src = JSON.parse(data);
+    } catch (error) {
+      console.error("Error al parsear JSON: ", error);
+      return; // Salir si ocurre un error al parsear JSON
+    }
     const newValues = [...values];
     newValues[index] = src;
     setValues(newValues);
@@ -78,7 +86,7 @@ const Avanzado = () => {
   // Función para calcular la suma de las monedas
   const calcularSumaValores = (imagenes) => {
     return imagenes.reduce((suma, imagen) => {
-      return suma + (Valores[imagen] || 0);
+      return suma + (bmValores[imagen] || 0);
     }, 0);
   };
   // Función para renderizar las imágenes
@@ -95,6 +103,27 @@ const Avanzado = () => {
         />
       );
     });
+  // Función para calcular puntos adicionales basados en el tiempo
+  const calcularPuntosBonus = (tiempo) => {
+    const minutos = Math.floor(tiempo / 60);
+    const segundos = tiempo % 60;
+    const tiempoTotal = minutos * 60 + segundos; // Convertir tiempo a segundos
+
+    if (tiempoTotal <= 60) {
+      // 0 seg - 1 min
+      return 4;
+    } else if (tiempoTotal <= 120) {
+      // 1 min 1 seg - 2 min
+      return 3;
+    } else if (tiempoTotal <= 180) {
+      // 2 min 1 seg - 3 min
+      return 2;
+    } else if (tiempoTotal <= 240) {
+      // 3 min 1 seg - 4 min
+      return 1;
+    }
+    return 0; // No bonus si el tiempo es mayor a 4 minutos
+  };
   // Función para comprobar si los emparejamientos son correctos
   const checkMatches = () => {
     let correct = 0;
@@ -120,11 +149,22 @@ const Avanzado = () => {
     setIncorrectCount(incorrect);
     setResults(newResults);
     setIsButtonVisible(false);
-    setScore(correct * 4);
-    localStorage.setItem("score", correct * 4);
+    // Mostrar el botón de puntaje
+    setIsScoreButtonVisible(true);
+    // Calcular puntaje base
+    let puntajeBase = correct * 4;
     // Pausar el cronómetro y guardar el tiempo
     cronometroRef.current.pause();
     setTimeElapsed(cronometroRef.current.getTime());
+    const tiempoTotal = cronometroRef.current.getTime();
+    // Calcular puntos bonus si todos los aciertos son correctos
+    let puntosBonus = 0;
+    if (correct === 8) {
+      puntosBonus = calcularPuntosBonus(tiempoTotal);
+      puntajeBase += puntosBonus;
+    }
+    setScore(puntajeBase);
+    localStorage.setItem("score", puntajeBase);
   };
 
   return (
@@ -133,7 +173,10 @@ const Avanzado = () => {
       <Cronometro ref={cronometroRef} />
       <div className={classes.container}>
         <div className={classes.leftContainer}>
-          <BilletesMonedas onDragStart={setDraggedImages} />
+          <BilletesMonedas
+            onDragStart={setDraggedImages}
+            onSumasCalculated={setSumas}
+          />
         </div>
         <div className={classes.rightContainer}>
           <Table className={classes.table}>
@@ -182,11 +225,19 @@ const Avanzado = () => {
             onClick={checkMatches}
           />
         )}
+        {isScoreButtonVisible && (
+          <Button
+            className={classes.button}
+            color="success"
+            value="Ver Puntaje Obtenido"
+            href={"/resultado"}
+          />
+        )}
         <Button
           className={classes.button}
           color="success"
-          value="Ver Puntaje Obtenido"
-          href={"/resultado"}
+          value="Reiniciar el Juego"
+          href={"/avanzado"}
         />
       </div>
     </div>
