@@ -106,7 +106,7 @@ const Resultado = () => {
                 />
               </Col>
               <Col>
-                <div className={classes.score}>{score}</div>
+                <div className={classes.score}>{score} Puntos</div>
               </Col>
               <Col>
                 <Button
