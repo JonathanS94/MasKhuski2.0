@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from "react";
-
-// reactstrap components
 import { Container, Row, Col, Progress } from "reactstrap";
 import Image from "commons/Image.js";
 import Input from "commons/Input.js";
 import Button from "commons/Button.js";
-
-//Estilo
+import axios from "axios"; // Importar Axios
 import { useStyles } from "./PagerHeader.style";
 
-const PageHeader =()=> {
+const PageHeader = () => {
   const classes = useStyles();
   //Componentes Usuario
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
+  const [nombre, setNombre] = useState([]);
+  const [edad, setEdad] = useState([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
-  // Validacion de campos vacios y
+
+  // Validacion de campos vacios
   useEffect(() => {
     let completedFields = 0;
-    if (name.length > 0) completedFields++;
-    if (age.length > 0) completedFields++;
+    if (nombre.length > 0) completedFields++;
+    if (edad.length > 0) completedFields++;
     setProgress((completedFields / 2) * 100);
 
     if (completedFields === 2) {
@@ -28,21 +26,41 @@ const PageHeader =()=> {
     } else {
       setIsButtonDisabled(true);
     }
-  }, [name, age]);
+  }, [nombre, edad]);
+
   // Validacion de solo ingrese hasta 20 letras
   const handleNameChange = (e) => {
     const value = e.target.value;
     if (/^[a-zA-Z\s]*$/.test(value) && value.length <= 20) {
-      setName(value);
+      setNombre(value);
     }
   };
+
   // Validacion de solo ingrese hasta dos digitos
   const handleAgeChange = (e) => {
     const value = e.target.value;
     if (/^\d*$/.test(value) && value.length <= 2) {
-      setAge(value);
+      setEdad(value);
     }
   };
+
+  // Método para manejar el envío de datos
+  const handleSubmit = async () => {
+    try {
+      // Guardar datos en la API
+      const response = await axios.post("http://localhost:8080/api/usuarios", {
+        nombre: nombre,
+        edad: edad,
+      });
+      console.log("Datos guardados exitosamente:", response.data);
+      // Guardar datos en localStorage para acceso posterior
+      localStorage.setItem("nombre", nombre);
+      localStorage.setItem("edad", edad);
+    } catch (error) {
+      console.error("Error al guardar los datos:", error);
+    }
+  };
+
   return (
     <div className="page-header header-filter">
       <div className="squares square1" />
@@ -63,7 +81,6 @@ const PageHeader =()=> {
               className={classes.img}
               src={require("assets/img/logo/logo.png")}
             />
-
             <div className={classes.h2}>Cuenta Conmigo</div>
           </Col>
           <Col
@@ -72,14 +89,14 @@ const PageHeader =()=> {
           >
             <Input
               className={classes.input}
-              placeholder="Ingrese su Nombre o Alias "
-              value={name}
+              placeholder="Ingrese su Nombre o Alias"
+              value={nombre}
               onChange={handleNameChange}
             />
             <Input
               className={classes.input}
-              placeholder="Ingrese su Edad "
-              value={age}
+              placeholder="Ingrese su Edad"
+              value={edad}
               onChange={handleAgeChange}
             />
             <Progress
@@ -91,6 +108,7 @@ const PageHeader =()=> {
               className={classes.button}
               color="success"
               value="JUGAR"
+              onClick={handleSubmit}
               href="/niveles"
               disabled={isButtonDisabled}
             />
@@ -100,4 +118,5 @@ const PageHeader =()=> {
     </div>
   );
 };
+
 export default PageHeader;

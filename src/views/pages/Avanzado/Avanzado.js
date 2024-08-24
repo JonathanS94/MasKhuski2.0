@@ -8,9 +8,12 @@ import BilletesMonedas from "components/BilletesMonedas/BilletesMonedas.js";
 import Cronometro from "components/Cronometro/Cronometro.js";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import axios from "axios";
 
 const Avanzado = () => {
   const classes = useStyles();
+  const [nombre, setNombre] = useState();
+  const [edad, setEdad] = useState();
   const [values, setValues] = useState([]);
   const [initialValues, setInitialValues] = useState([]);
   const [draggedImages, setDraggedImages] = useState(null);
@@ -37,6 +40,7 @@ const Avanzado = () => {
     "billete20.png": 20,
     "billete50.png": 50,
   };
+
   // Inicializar valores
   useEffect(() => {
     // Esta función debe ser llamada cuando el componente Monedas calcule las sumas
@@ -166,7 +170,30 @@ const Avanzado = () => {
     setScore(puntajeBase);
     localStorage.setItem("score", puntajeBase);
   };
+  localStorage.setItem("tipo", "Avanzado");
+  localStorage.setItem("puntaje", score);
+  localStorage.setItem("tiempo", timeElapsed);
+  // Función para guardar el puntaje en el backend
+  const guardarPuntaje = async () => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/puntajes", {
+        tipo: "Avanzado",
+        puntos: score,
+        tiempo: timeElapsed,
+      });
 
+      if (response.status === 200) {
+        console.log("Puntaje guardado exitosamente");
+        localStorage.setItem("tipo", "Avanzado");
+        localStorage.setItem("puntaje", score);
+        localStorage.setItem("tiempo", timeElapsed);
+      } else {
+        console.error("Error al guardar el puntaje");
+      }
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
+    }
+  };
   return (
     <div>
       <div className={classes.h1}>NIVEL &nbsp; AVANZADO</div>
@@ -229,6 +256,7 @@ const Avanzado = () => {
           <Button
             className={classes.button}
             color="success"
+            onClick={guardarPuntaje}
             value="Ver Puntaje Obtenido"
             href={"/resultado"}
           />
