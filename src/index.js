@@ -12,7 +12,7 @@ import Principiante from "views/pages/Principiante/Principiante.js";
 import Intermedio from "views/pages/Intermedio/Intermedio.js";
 import Avanzado from "views/pages/Avanzado/Avanzado.js";
 import Resultado from "views/pages/Resultado/Resultado.js";
-import PuntajesAltos from "views/pages/PuntajesAltos/PuntuajesAltos.js";
+import PuntajesAltos from "views/pages/PuntajesAltos/PuntajesAltos.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

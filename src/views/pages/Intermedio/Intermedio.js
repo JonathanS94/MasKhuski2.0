@@ -7,6 +7,7 @@ import Billetes from "components/Billetes/Billetes";
 import Cronometro from "components/Cronometro/Cronometro.js";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import axios from "axios";
 
 const Intermedio = () => {
   const classes = useStyles([]);
@@ -159,9 +160,34 @@ const Intermedio = () => {
     setScore(puntajeBase);
     localStorage.setItem("score", puntajeBase);
   };
+  localStorage.setItem("tipo", "Intermedio");
+  localStorage.setItem("puntaje", score);
+  localStorage.setItem("tiempo", timeElapsed);
+  // Función para guardar el puntaje en el backend
+  const guardarPuntaje = async () => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/puntajes", {
+        tipo: "Intermedio",
+        puntos: score,
+        tiempo: timeElapsed,
+      });
+
+      if (response.status === 200) {
+        console.log("Puntaje guardado exitosamente");
+        localStorage.setItem("tipo", "Intermedio");
+        localStorage.setItem("puntaje", score);
+        localStorage.setItem("tiempo", timeElapsed);
+      } else {
+        console.error("Error al guardar el puntaje");
+      }
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
+    }
+  };
   return (
     <div>
       <div className={classes.h1}>NIVEL &nbsp; INTERMEDIO</div>
+
       <Cronometro ref={cronometroRef} />
       <div className={classes.container}>
         <div className={classes.leftContainer}>
@@ -222,6 +248,7 @@ const Intermedio = () => {
             className={classes.button}
             color="success"
             value="Ver Puntaje Obtenido"
+            onClick={guardarPuntaje}
             href={"/resultado"}
           />
         )}

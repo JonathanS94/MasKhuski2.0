@@ -7,6 +7,7 @@ import Monedas from "components/Monedas/Monedas";
 import Cronometro from "components/Cronometro/Cronometro.js";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import axios from "axios";
 
 const Principiante = () => {
   const classes = useStyles();
@@ -30,6 +31,7 @@ const Principiante = () => {
     "moneda50.png": 0.5,
     "moneda100.png": 1.0,
   };
+
   // Inicializar valores
   useEffect(() => {
     // Esta función debe ser llamada cuando el componente Monedas calcule las sumas
@@ -167,6 +169,35 @@ const Principiante = () => {
   const handleSumasCalculated = (sumas) => {
     setSumas(sumas); // Guardar las sumas en el estado
   };
+  localStorage.setItem("tipo", "Principiante");
+  localStorage.setItem("puntaje", score);
+  localStorage.setItem("tiempo", timeElapsed);
+  // Función para guardar el puntaje en el backend
+  const guardarPuntaje = async () => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/puntajes", {
+        //nombre: nombre,
+        //edad: edad,
+        tipo: "Principiante",
+        puntos: score,
+        tiempo: timeElapsed,
+      });
+
+      if (response.status === 200) {
+        console.log("Puntaje guardado exitosamente");
+        // Guardar datos en localStorage para acceso posterior
+        //localStorage.setItem("nombre", nombre);
+        //localStorage.setItem("edad", edad);
+        localStorage.setItem("tipo", "Principiante");
+        localStorage.setItem("puntaje", score);
+        localStorage.setItem("tiempo", timeElapsed);
+      } else {
+        console.error("Error al guardar el puntaje");
+      }
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
+    }
+  };
 
   return (
     <div>
@@ -242,6 +273,7 @@ const Principiante = () => {
             className={classes.button}
             color="success"
             value="Ver Puntaje Obtenido"
+            onClick={guardarPuntaje}
             href={"/resultado"}
           />
         )}
