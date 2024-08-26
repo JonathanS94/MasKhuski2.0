@@ -174,13 +174,16 @@ const Principiante = () => {
   // Función para guardar el puntaje en el backend
   const guardarPuntaje = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/api/puntajes", {
-        nombre: nombre,
-        edad: edad,
-        tipo: "Principiante",
-        puntos: score,
-        tiempo: timeElapsed,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/puntajes",
+        {
+          nombre: nombre,
+          edad: edad,
+          tipo: "Principiante",
+          puntos: score,
+          tiempo: timeElapsed,
+        }
+      );
 
       if (response.status === 200) {
         console.log("Puntaje guardado exitosamente");
