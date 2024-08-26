@@ -12,8 +12,6 @@ import axios from "axios";
 
 const Avanzado = () => {
   const classes = useStyles();
-  const [nombre, setNombre] = useState();
-  const [edad, setEdad] = useState();
   const [values, setValues] = useState([]);
   const [initialValues, setInitialValues] = useState([]);
   const [draggedImages, setDraggedImages] = useState(null);
@@ -26,6 +24,8 @@ const Avanzado = () => {
   const cronometroRef = useRef();
   const [score, setScore] = useState(0);
   const [sumas, setSumas] = useState([]);
+  const [nombre, setNombre] = useState(localStorage.getItem("nombre"));
+  const [edad, setEdad] = useState(localStorage.getItem("edad"));
   // Mapeo de las billetes a sus valores numéricos
   const bmValores = {
     "moneda5.png": 0.05,
@@ -176,11 +176,16 @@ const Avanzado = () => {
   // Función para guardar el puntaje en el backend
   const guardarPuntaje = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/api/puntajes", {
-        tipo: "Avanzado",
-        puntos: score,
-        tiempo: timeElapsed,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/puntajes",
+        {
+          nombre: nombre,
+          edad: edad,
+          tipo: "Avanzado",
+          puntos: score,
+          tiempo: timeElapsed,
+        }
+      );
 
       if (response.status === 200) {
         console.log("Puntaje guardado exitosamente");

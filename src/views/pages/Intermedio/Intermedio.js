@@ -23,6 +23,8 @@ const Intermedio = () => {
   const cronometroRef = useRef();
   const [score, setScore] = useState(0);
   const [sumas, setSumas] = useState([]);
+  const [nombre, setNombre] = useState(localStorage.getItem("nombre"));
+  const [edad, setEdad] = useState(localStorage.getItem("edad"));
   // Mapeo de las billetes a sus valores numéricos
   const billeteValores = {
     "billete1.png": 1,
@@ -166,11 +168,16 @@ const Intermedio = () => {
   // Función para guardar el puntaje en el backend
   const guardarPuntaje = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/api/puntajes", {
-        tipo: "Intermedio",
-        puntos: score,
-        tiempo: timeElapsed,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/puntajes",
+        {
+          nombre: nombre,
+          edad: edad,
+          tipo: "Intermedio",
+          puntos: score,
+          tiempo: timeElapsed,
+        }
+      );
 
       if (response.status === 200) {
         console.log("Puntaje guardado exitosamente");
