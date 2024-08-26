@@ -23,6 +23,8 @@ const Principiante = () => {
   const cronometroRef = useRef();
   const [score, setScore] = useState(0); // Estado para el puntaje
   const [sumas, setSumas] = useState([]);
+  const [nombre, setNombre] = useState(localStorage.getItem("nombre"));
+  const [edad, setEdad] = useState(localStorage.getItem("edad"));
   // Mapeo de las monedas a sus valores numéricos
   const monedaValores = {
     "moneda5.png": 0.05,
@@ -169,15 +171,12 @@ const Principiante = () => {
   const handleSumasCalculated = (sumas) => {
     setSumas(sumas); // Guardar las sumas en el estado
   };
-  localStorage.setItem("tipo", "Principiante");
-  localStorage.setItem("puntaje", score);
-  localStorage.setItem("tiempo", timeElapsed);
   // Función para guardar el puntaje en el backend
   const guardarPuntaje = async () => {
     try {
       const response = await axios.post("http://localhost:8080/api/puntajes", {
-        //nombre: nombre,
-        //edad: edad,
+        nombre: nombre,
+        edad: edad,
         tipo: "Principiante",
         puntos: score,
         tiempo: timeElapsed,
@@ -185,9 +184,8 @@ const Principiante = () => {
 
       if (response.status === 200) {
         console.log("Puntaje guardado exitosamente");
-        // Guardar datos en localStorage para acceso posterior
-        //localStorage.setItem("nombre", nombre);
-        //localStorage.setItem("edad", edad);
+        localStorage.setItem("nombre", nombre);
+        localStorage.setItem("edad", edad);
         localStorage.setItem("tipo", "Principiante");
         localStorage.setItem("puntaje", score);
         localStorage.setItem("tiempo", timeElapsed);
@@ -283,6 +281,10 @@ const Principiante = () => {
           value="Reiniciar el Juego"
           href={"/principiante"}
         />
+      </div>
+      <div className={classes.info}>
+        <p>Nombre: {nombre}</p>
+        <p>Edad: {edad}</p>
       </div>
     </div>
   );
