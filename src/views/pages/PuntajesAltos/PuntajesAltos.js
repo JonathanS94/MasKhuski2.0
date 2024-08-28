@@ -7,40 +7,10 @@ const PuntajesAltos = () => {
   const classes = useStyles();
   const [puntajes, setPuntajes] = useState([]);
   const [filtroNivel, setFiltroNivel] = useState("Todos");
-  const [nombre, setNombre] = useState("");
-  const [edad, setEdad] = useState("");
-  const [tipo, setTipo] = useState("");
-  const [score, setScore] = useState(0);
-  const [timeElapsed, setTimeElapsed] = useState(0);
-
-  // Obtener el puntaje de localStorage cuando el componente se monta
-  useEffect(() => {
-    const storedNombre = localStorage.getItem("nombre");
-    const storedEdad = localStorage.getItem("edad");
-    const storedTipo = localStorage.getItem("tipo");
-    const storedScore = localStorage.getItem("score");
-    const storedTimeElapsed = localStorage.getItem("tiempo");
-
-    if (storedNombre !== null) {
-      setNombre(storedNombre);
-    }
-    if (storedEdad !== null) {
-      setEdad(storedEdad);
-    }
-    if (storedTipo !== null) {
-      setTipo(storedTipo);
-    }
-    if (storedScore !== null) {
-      setScore(parseInt(storedScore, 10));
-    }
-    if (storedTimeElapsed !== null) {
-      setTimeElapsed(storedTimeElapsed);
-    }
-  }, []);
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/v1/puntajes")
+      .get("http://127.0.0.1:8000/puntajes/")
       .then((response) => {
         const sortedPuntajes = response.data.sort((a, b) => {
           if (a.puntos === b.puntos) {
@@ -120,26 +90,6 @@ const PuntajesAltos = () => {
         value="Salir del Juego"
         href={"/principal"}
       ></Button>
-
-      <div className={classes.container}>
-        <div className={classes.puntajeItem}>
-          <p>
-            <strong>Nombre:</strong> {nombre}
-          </p>
-          <p>
-            <strong>Edad:</strong> {edad}
-          </p>
-          <p>
-            <strong>Nivel:</strong> {tipo}
-          </p>
-          <p>
-            <strong>Puntaje:</strong> {score}
-          </p>
-          <p>
-            <strong>Tiempo:</strong> {timeElapsed}
-          </p>
-        </div>
-      </div>
     </div>
   );
 };

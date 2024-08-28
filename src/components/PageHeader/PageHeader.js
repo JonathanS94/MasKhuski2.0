@@ -5,9 +5,11 @@ import Input from "commons/Input.js";
 import Button from "commons/Button.js";
 import axios from "axios"; // Importar Axios
 import { useStyles } from "./PagerHeader.style";
+import { useNavigate } from "react-router-dom";
 
 const PageHeader = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
   //Componentes Usuario
   const [nombre, setNombre] = useState([]);
   const [edad, setEdad] = useState([]);
@@ -48,7 +50,7 @@ const PageHeader = () => {
   const handleSubmit = async () => {
     try {
       // Guardar datos en la API
-      const response = await axios.post("http://localhost:8080/api/usuarios", {
+      const response = await axios.post("http://127.0.0.1:8000/usuarios/", {
         nombre: nombre,
         edad: edad,
       });
@@ -56,6 +58,7 @@ const PageHeader = () => {
       // Guardar datos en localStorage para acceso posterior
       localStorage.setItem("nombre", nombre);
       localStorage.setItem("edad", edad);
+      navigate("/niveles");
     } catch (error) {
       console.error("Error al guardar los datos:", error);
     }
@@ -109,7 +112,7 @@ const PageHeader = () => {
               color="success"
               value="JUGAR"
               onClick={handleSubmit}
-              href="/niveles"
+              //href="/niveles"
               disabled={isButtonDisabled}
             />
           </Col>

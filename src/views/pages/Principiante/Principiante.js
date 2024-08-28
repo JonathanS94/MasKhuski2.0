@@ -175,7 +175,7 @@ const Principiante = () => {
   const guardarPuntaje = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/puntajes",
+        "http://127.0.0.1:8000/puntajes/",
         {
           nombre: nombre,
           edad: edad,
@@ -284,10 +284,6 @@ const Principiante = () => {
           value="Reiniciar el Juego"
           href={"/principiante"}
         />
-      </div>
-      <div className={classes.info}>
-        <p>Nombre: {nombre}</p>
-        <p>Edad: {edad}</p>
       </div>
     </div>
   );
