@@ -177,7 +177,7 @@ const Avanzado = () => {
   const guardarPuntaje = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/puntajes",
+        "http://127.0.0.1:8000/puntajes/",
         {
           nombre: nombre,
           edad: edad,
